@@ -1,0 +1,104 @@
+{%  assign count =  collection.metafields.custom.collection_list.value.count %}
+{% if count < 6 %}
+  {%  assign view = 'xsmall' %}
+{% else %}
+  {% assign view = '6-3' %}
+{% endif %}
+<div class="page-width plus-related-collections-container">
+  {% if title != blank %}
+    <h2 class="plus-related-collections-title">{{ title }}</h2>
+  {% endif %}
+  <div class="plus-grid-container">
+    <div class="new-grid plus-related-collections-grid" data-view="{{ view }}">
+      {% assign sizeVariable = collection.metafields.custom.collection_list.value.count | at_most: 6 %}
+      {% for col in collection.metafields.custom.collection_list.value %}
+        {% render 'collection-grid-item', collection: col, sizeVariable: sizeVariable, fallback: 'variable' %}
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="plus-dots-container">
+    {% for i in (1..count) %}
+      <div class="plus-slider-dot" data-pos="{{ forloop.index }}"></div>
+    {% endfor %}
+  </div>
+</div>
+
+{%  style  %}
+  .plus-related-collections-container {
+    margin: 2rem auto;
+  }
+
+  .plus-related-collections-title {
+    margin-bottom: 1rem;
+  }
+
+  @media screen and (max-width: 480px) {
+    .plus-related-collections-grid {
+      position: relative;
+      overflow-x: scroll;
+      flex-wrap: nowrap;
+      -ms-overflow-style: none; /* IE and Edge */
+      scrollbar-width: none; /* Firefox */
+    }
+
+    .plus-related-collections-grid::-webkit-scrollbar {
+      display: none;
+      transition: all 0.2s ease;
+    }
+
+    .plus-dots-container {
+      margin-top: 1rem;
+      position: absolute;
+      left: 50%;
+      bottom: auto;
+      display: grid;
+      width: auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-auto-flow: column;
+      column-gap: 10px;
+      transform: translateX(-50%);
+    }
+
+    .plus-slider-dot {
+          display: block;
+          width: 10px;
+          height: 10px;
+          background: grey;
+          border-radius: 50%;
+    }
+  }
+{% endstyle %}
+
+<script>
+  window.Plus = window.Plus || {};
+  Plus.settings = {
+    gridItemSelector: '.grid-item',
+    gridContainerSelector: '.plus-related-collections-grid',
+    sliderDotsSelector: '.plus-slider-dot',
+    slideElements: function (container, elementWidth, elementIndex) {
+      container.scroll({
+        left: elementWidth * (elementIndex),
+        top: 0,
+        behavior: 'smooth'
+      }) 
+    }
+  }
+
+  const initSection = (settings) => {
+    const gridItemWidth = document.querySelector(settings.gridItemSelector).getBoundingClientRect().width;
+    const itemsGrid = document.querySelector(settings.gridContainerSelector);
+    const dots = document.querySelectorAll(settings.sliderDotsSelector);
+    
+    dots.forEach((dot, index) => {
+      dot.addEventListener('click', () => {
+        settings.slideElements(itemsGrid, gridItemWidth, index - 1);
+      })
+    }) 
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    initSection(Plus.settings);
+  });
+</script>
