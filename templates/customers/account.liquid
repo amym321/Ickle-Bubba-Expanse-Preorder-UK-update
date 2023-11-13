@@ -28,13 +28,27 @@
           </thead>
           <tbody>
             {%- for order in customer.orders -%}
+
+              {% comment %}  pre-order date on original order - am {% endcomment %}
+              {% assign order_preOrderDate = empty %}
+              {% if order.attributes %}
+                {% for attribute in order.attributes %}
+                  {% assign attribute-1st = attribute | first %}
+                  {% if attribute-1st == "preOrderDate:" %}
+                    {% assign order_preOrderDate = attribute | last | date: "%s" %}
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
+
+              {% assign date-today =  "today" | date: "%s" %}
+
               <tr class="table__section">
                 <td data-label="{{ 'customer.orders.order_number' | t }}">{{ order.name | link_to: order.customer_url }}</td>
                 <td data-label="{{ 'customer.orders.date' | t }}">{{ order.created_at | time_tag: format: 'date' }}</td>
                 <td data-label="{{ 'customer.orders.payment_status' | t }}">{{ order.financial_status_label }}</td>
                 <td data-label="{{ 'customer.orders.fulfillment_status' | t }}">{{ order.fulfillment_status_label }}</td>
                 {% comment %}  pre-order date & shipping method - am {% endcomment %}
-                <td data-label="Dispatch By">{% render 'order-preorder-dates', order: order %}</td>
+                <td data-label="Dispatch By">{% if order_preOrderDate > date-today %} {{order_preOrderDate | date: "%d %B" }} {% endif %}</td>
                 <td data-label="Ship Method">{{  order.shipping_method.title }}</td>
                 <td data-label="{{ 'customer.orders.total' | t }}">{{ order.total_price | money }}</td>
               </tr>
