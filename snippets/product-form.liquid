@@ -47,7 +47,8 @@
         {% endif  %}
     
         {% if metafield-date != empty and variant.available %}
-          {% if metafield-date > date-today %}
+          {% comment %} only add pre-order date if inventory < 1 - am {% endcomment %}
+          {% if metafield-date > date-today and variant.inventory_quantity < 1 %}
             {% assign variant-date = metafield-date | date:  "%d/%m" %}
             {% assign first-variant-metafield-date =  variant.metafields.custom.pre_order_date  | date: "%d/%m"%}
             <div id="preorder-pdp-date" data-variant-date="{{metafield-date}}">

@@ -8398,6 +8398,9 @@ if (console && console.log) {
 
         var variantsMetafields = jQuery.parseJSON($("#hidden-variant-metafields").html());
         var today = $("#hidden-today").html();
+        var variantInventoryObject2 = window.inventories[this.productId][variant.id];
+        var variantQuantity = variantInventoryObject2.quantity;
+        console.log('log 10) variantQuantity ='+ variantQuantity;
 
         $("#hidden-current-variant-metafield").hide(); // delete the field 1st. If item "coming soon" no variant shows. So start with hidden field b/c can't delete later based on variant.id
         $("#hidden-current-variant-message").hide();
@@ -8407,7 +8410,7 @@ if (console && console.log) {
         variantsMetafields.forEach(function(variantMetafield) {
           if (variantMetafield.variant_id == variant.id) {
             if (variantMetafield.metafield_value !== false) {
-              if (variantMetafield.metafield_value_s > today) {
+              if (variantMetafield.metafield_value_s > today && variantQuantity < 1) {
                 $("#hidden-current-variant-metafield").html("Order today for dispatch by "+variantMetafield.metafield_value);
                 $("#hidden-current-variant-metafield").show();
                 $("#hidden-current-variant-message").html("We will fulfill the item as soon as it becomes available");

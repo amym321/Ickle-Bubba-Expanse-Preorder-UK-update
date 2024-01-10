@@ -8,11 +8,11 @@
 
   {% if metafield-date != empty %}
     {% if cart-item-counter == 1 %}
-      {% if metafield-date > date-today %}
+      {% if metafield-date > date-today and item.variant.inventory_quantity < 1 %}
         {% assign order-date = metafield-date  %}
       {% endif %}
     {% else %}
-      {% if metafield-date > order-date %}
+      {% if metafield-date > order-date and item.variant.inventory_quantity < 1 %}
         {% assign order-date = metafield-date %}
       {% endif %}
     {% endif %}
